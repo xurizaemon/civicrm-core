@@ -651,7 +651,7 @@ class CRM_Utils_REST {
    */
   public static function processMultiple() {
     $output = array();
-    foreach (json_decode($_REQUEST['json'], TRUE) as $key => $call) {
+    foreach (json_decode($_POST['json'], TRUE) as $key => $call) {
       $args = array(
         'civicrm',
         $call[0],

@@ -59,7 +59,7 @@ class CRM_UF_Form_Inline_Preview extends CRM_UF_Form_AbstractPreview {
     if (!CRM_Core_Permission::check('administer CiviCRM')) {
       CRM_Core_Error::fatal(ts('Permission Denied'));
     }
-    $content = json_decode($_REQUEST['ufData'], TRUE);
+    $content = json_decode($_POST['ufData'], TRUE);
     foreach (array('ufGroup', 'ufFieldCollection') as $key) {
       if (!is_array($content[$key])) {
         CRM_Core_Error::fatal("Missing JSON parameter, $key");

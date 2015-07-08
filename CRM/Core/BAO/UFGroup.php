@@ -787,7 +787,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
           $_POST
         );
         unset($_POST['_qf_default']);
-        unset($_REQUEST['_qf_default']);
+        unset($_POST['_qf_default']);
         if ($reset) {
           $controller->reset();
         }
@@ -810,7 +810,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup {
 
       // we are done processing so restore the POST/REQUEST vars
       if (($reset || $doNotProcess) && $oldQFDefault) {
-        $_POST['_qf_default'] = $_REQUEST['_qf_default'] = $oldQFDefault;
+        $_POST['_qf_default'] = $_POST['_qf_default'] = $oldQFDefault;
       }
 
       $template = CRM_Core_Smarty::singleton();

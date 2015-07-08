@@ -391,7 +391,7 @@ class CRM_Core_Menu {
     $values = &$nav['breadcrumb'];
     $config = CRM_Core_Config::singleton();
     foreach ($values as $index => $item) {
-      if (strpos(CRM_Utils_Array::value($config->userFrameworkURLVar, $_REQUEST),
+      if (strpos(CRM_Utils_Array::value($config->userFrameworkURLVar, $_POST),
           $item['path']
         ) === 0
       ) {

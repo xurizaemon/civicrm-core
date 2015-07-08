@@ -120,7 +120,7 @@ abstract class CRM_Core_Payment {
     }
 
     $log = new CRM_Utils_SystemLogger();
-    $log->alert($message, $_REQUEST);
+    $log->alert($message, $_POST);
   }
 
   /**

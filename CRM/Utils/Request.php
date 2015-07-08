@@ -112,13 +112,13 @@ class CRM_Utils_Request {
   }
 
   /**
-   * This is a replacement for $_REQUEST which includes $_GET/$_POST
+   * This is a replacement for $_POST which includes $_GET/$_POST
    * but excludes $_COOKIE / $_ENV / $_SERVER.
    *
    * @return array
    */
   public static function exportValues() {
-    // For more discussion of default $_REQUEST handling, see:
+    // For more discussion of default $_POST handling, see:
     // http://www.php.net/manual/en/reserved.variables.request.php
     // http://www.php.net/manual/en/ini.core.php#ini.request-order
     // http://www.php.net/manual/en/ini.core.php#ini.variables-order

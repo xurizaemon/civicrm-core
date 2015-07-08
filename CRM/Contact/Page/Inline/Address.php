@@ -48,9 +48,9 @@ class CRM_Contact_Page_Inline_Address extends CRM_Core_Page {
    */
   public function run() {
     // get the emails for this contact
-    $contactId = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullObject, TRUE, NULL, $_REQUEST);
-    $locBlockNo = CRM_Utils_Request::retrieve('locno', 'Positive', CRM_Core_DAO::$_nullObject, TRUE, NULL, $_REQUEST);
-    $addressId = CRM_Utils_Request::retrieve('aid', 'Positive', CRM_Core_DAO::$_nullObject, FALSE, NULL, $_REQUEST);
+    $contactId = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullObject, TRUE, NULL, $_POST);
+    $locBlockNo = CRM_Utils_Request::retrieve('locno', 'Positive', CRM_Core_DAO::$_nullObject, TRUE, NULL, $_POST);
+    $addressId = CRM_Utils_Request::retrieve('aid', 'Positive', CRM_Core_DAO::$_nullObject, FALSE, NULL, $_POST);
 
     $address = array();
     if ($addressId > 0) {

@@ -62,7 +62,7 @@ class CRM_Mailing_Page_Common extends CRM_Core_Page {
     }
 
     $cancel = CRM_Utils_Request::retrieve("_qf_{$this->_type}_cancel", 'String', CRM_Core_DAO::$_nullObject,
-      FALSE, NULL, $_REQUEST
+      FALSE, NULL, $_POST
     );
     if ($cancel) {
       $config = CRM_Core_Config::singleton();
@@ -70,7 +70,7 @@ class CRM_Mailing_Page_Common extends CRM_Core_Page {
     }
 
     $confirm = CRM_Utils_Request::retrieve('confirm', 'Boolean', CRM_Core_DAO::$_nullObject,
-      FALSE, NULL, $_REQUEST
+      FALSE, NULL, $_POST
     );
 
     list($displayName, $email) = CRM_Mailing_Event_BAO_Queue::getContactInfo($queue_id);

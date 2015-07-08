@@ -506,7 +506,7 @@ class CRM_Report_Form extends CRM_Core_Form {
       }
 
       // lets always do a force if reset is found in the url.
-      if (!empty($_REQUEST['reset'])) {
+      if (!empty($_POST['reset'])) {
         $this->_force = 1;
       }
 

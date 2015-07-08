@@ -760,7 +760,7 @@ class CRM_Core_Resources {
    *   is this page request an ajax snippet?
    */
   public static function isAjaxMode() {
-    return in_array(CRM_Utils_Array::value('snippet', $_REQUEST), array(
+    return in_array(CRM_Utils_Array::value('snippet', $_POST), array(
         CRM_Core_Smarty::PRINT_SNIPPET,
         CRM_Core_Smarty::PRINT_NOFORM,
         CRM_Core_Smarty::PRINT_JSON,

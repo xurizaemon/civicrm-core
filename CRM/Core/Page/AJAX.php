@@ -43,10 +43,10 @@ class CRM_Core_Page_AJAX {
    *
    */
   public static function run() {
-    $className = CRM_Utils_Type::escape($_REQUEST['class_name'], 'String');
+    $className = CRM_Utils_Type::escape($_POST['class_name'], 'String');
     $type = '';
-    if (!empty($_REQUEST['type'])) {
-      $type = CRM_Utils_Type::escape($_REQUEST['type'], 'String');
+    if (!empty($_POST['type'])) {
+      $type = CRM_Utils_Type::escape($_POST['type'], 'String');
     }
 
     if (!$className) {
@@ -54,8 +54,8 @@ class CRM_Core_Page_AJAX {
     }
 
     $fnName = NULL;
-    if (isset($_REQUEST['fn_name'])) {
-      $fnName = CRM_Utils_Type::escape($_REQUEST['fn_name'], 'String');
+    if (isset($_POST['fn_name'])) {
+      $fnName = CRM_Utils_Type::escape($_POST['fn_name'], 'String');
     }
 
     if (!self::checkAuthz($type, $className, $fnName)) {
@@ -94,12 +94,12 @@ class CRM_Core_Page_AJAX {
    */
   public static function setIsQuickConfig() {
     $id = $context = NULL;
-    if (!empty($_REQUEST['id'])) {
-      $id = CRM_Utils_Type::escape($_REQUEST['id'], 'Integer');
+    if (!empty($_POST['id'])) {
+      $id = CRM_Utils_Type::escape($_POST['id'], 'Integer');
     }
 
-    if (!empty($_REQUEST['context'])) {
-      $context = CRM_Utils_Type::escape($_REQUEST['context'], 'String');
+    if (!empty($_POST['context'])) {
+      $context = CRM_Utils_Type::escape($_POST['context'], 'String');
     }
     // return false if $id is null and
     // $context is not civicrm_event or civicrm_contribution_page

@@ -14,14 +14,14 @@ class CRM_Core_Page_AJAX_RecurringEntity {
 
   public static function updateMode() {
     $finalResult = array();
-    if (CRM_Utils_Array::value('mode', $_REQUEST) && CRM_Utils_Array::value('entityId', $_REQUEST) && CRM_Utils_Array::value('entityTable', $_REQUEST)) {
+    if (CRM_Utils_Array::value('mode', $_POST) && CRM_Utils_Array::value('entityId', $_POST) && CRM_Utils_Array::value('entityTable', $_POST)) {
 
-      $mode = CRM_Utils_Type::escape($_REQUEST['mode'], 'Integer');
-      $entityId = CRM_Utils_Type::escape($_REQUEST['entityId'], 'Integer');
-      $entityTable = CRM_Utils_Type::escape($_REQUEST['entityTable'], 'String');
+      $mode = CRM_Utils_Type::escape($_POST['mode'], 'Integer');
+      $entityId = CRM_Utils_Type::escape($_POST['entityId'], 'Integer');
+      $entityTable = CRM_Utils_Type::escape($_POST['entityTable'], 'String');
 
-      if (!empty($_REQUEST['linkedEntityTable'])) {
-        $result = CRM_Core_BAO_RecurringEntity::updateModeLinkedEntity($entityId, $_REQUEST['linkedEntityTable'], $entityTable);
+      if (!empty($_POST['linkedEntityTable'])) {
+        $result = CRM_Core_BAO_RecurringEntity::updateModeLinkedEntity($entityId, $_POST['linkedEntityTable'], $entityTable);
       }
 
       $dao = new CRM_Core_DAO_RecurringEntity();

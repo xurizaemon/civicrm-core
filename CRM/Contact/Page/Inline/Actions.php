@@ -47,7 +47,7 @@ class CRM_Contact_Page_Inline_Actions extends CRM_Core_Page {
    * @return void
    */
   public function run() {
-    $contactId = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullObject, TRUE, NULL, $_REQUEST);
+    $contactId = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullObject, TRUE, NULL, $_POST);
 
     $this->assign('contactId', $contactId);
     $this->assign('actionsMenuList', CRM_Contact_BAO_Contact::contextMenu($contactId));

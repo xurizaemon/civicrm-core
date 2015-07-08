@@ -37,7 +37,7 @@
  */
 class CRM_Core_Page_Inline_Help {
   public function run() {
-    $args = $_REQUEST;
+    $args = $_POST;
     if (!empty($args['file']) && strpos($args['file'], '..') === FALSE) {
       $file = $args['file'] . '.hlp';
       $additionalTPLFile = $args['file'] . '.extra.hlp';

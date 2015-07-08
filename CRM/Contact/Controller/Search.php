@@ -91,10 +91,10 @@ class CRM_Contact_Controller_Search extends CRM_Core_Controller {
     }
     elseif (
       strpos($qString, 'custom') !== FALSE &&
-      isset($_REQUEST['csid'])
+      isset($_POST['csid'])
     ) {
       $path = 'civicrm/contact/search/custom';
-      $args = "reset=1&csid={$_REQUEST['csid']}";
+      $args = "reset=1&csid={$_POST['csid']}";
     }
 
     $url = CRM_Utils_System::url($path, $args);

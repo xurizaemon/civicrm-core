@@ -42,7 +42,7 @@ class CRM_Core_Page_RecurringEntityPreview extends CRM_Core_Page {
   public function run() {
     $parentEventId = $startDate = $endDate = NULL;
     $dates = $original = array();
-    $formValues = $_REQUEST;
+    $formValues = $_POST;
     if (!empty($formValues['entity_table'])) {
       $startDateColumnName = CRM_Core_BAO_RecurringEntity::$_dateColumns[$formValues['entity_table']]['dateColumns'][0];
       $endDateColumnName = CRM_Core_BAO_RecurringEntity::$_dateColumns[$formValues['entity_table']]['intervalDateColumns'][0];

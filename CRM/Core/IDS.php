@@ -65,9 +65,9 @@ class CRM_Core_IDS {
     }
 
     #add request url and user agent
-    $_REQUEST['IDS_request_uri'] = $_SERVER['REQUEST_URI'];
+    $_POST['IDS_request_uri'] = $_SERVER['REQUEST_URI'];
     if (isset($_SERVER['HTTP_USER_AGENT'])) {
-      $_REQUEST['IDS_user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+      $_POST['IDS_user_agent'] = $_SERVER['HTTP_USER_AGENT'];
     }
 
     $configFile = self::createConfigFile(FALSE);
@@ -76,14 +76,14 @@ class CRM_Core_IDS {
     require_once 'IDS/Init.php';
     try {
       $init = IDS_Init::init($configFile);
-      $ids = new IDS_Monitor($_REQUEST, $init);
+      $ids = new IDS_Monitor($_POST, $init);
     }
     catch (Exception $e) {
       // might be an old stale copy of Config.IDS.ini
       // lets try to rebuild it again and see if it works
       $configFile = self::createConfigFile(TRUE);
       $init = IDS_Init::init($configFile);
-      $ids = new IDS_Monitor($_REQUEST, $init);
+      $ids = new IDS_Monitor($_POST, $init);
     }
 
     $result = $ids->run();

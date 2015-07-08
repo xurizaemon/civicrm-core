@@ -41,11 +41,11 @@ class CRM_Custom_Page_AJAX {
    *
    */
   public static function getOptionList() {
-    $params = $_REQUEST;
+    $params = $_POST;
 
-    $sEcho = CRM_Utils_Type::escape($_REQUEST['sEcho'], 'Integer');
-    $offset = isset($_REQUEST['iDisplayStart']) ? CRM_Utils_Type::escape($_REQUEST['iDisplayStart'], 'Integer') : 0;
-    $rowCount = isset($_REQUEST['iDisplayLength']) ? CRM_Utils_Type::escape($_REQUEST['iDisplayLength'], 'Integer') : 25;
+    $sEcho = CRM_Utils_Type::escape($_POST['sEcho'], 'Integer');
+    $offset = isset($_POST['iDisplayStart']) ? CRM_Utils_Type::escape($_POST['iDisplayStart'], 'Integer') : 0;
+    $rowCount = isset($_POST['iDisplayLength']) ? CRM_Utils_Type::escape($_POST['iDisplayLength'], 'Integer') : 25;
 
     $params['page'] = ($offset / $rowCount) + 1;
     $params['rp'] = $rowCount;
@@ -72,7 +72,7 @@ class CRM_Custom_Page_AJAX {
    *
    */
   public static function fixOrdering() {
-    $params = $_REQUEST;
+    $params = $_POST;
 
     $queryParams = array(
       1 => array($params['start'], 'Integer'),
