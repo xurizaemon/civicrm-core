@@ -73,6 +73,11 @@ class CRM_Core_Smarty extends Smarty {
   static private $_singleton = NULL;
 
   /**
+   * Is the compile dir writable?
+   */
+  private $compile_dir_writable = TRUE;
+
+  /**
    * @var array (string $name => mixed $value) a list of variables ot save temporarily
    */
   private $backupFrames = array();
@@ -99,12 +104,9 @@ class CRM_Core_Smarty extends Smarty {
     }
     $this->compile_dir = $config->templateCompileDir;
 
-    // check and ensure it is writable
-    // else we sometime suppress errors quietly and this results
-    // in blank emails etc
+    // Check and ensure it is writable; this is checked in fetch() method.
     if (!is_writable($this->compile_dir)) {
-      echo "CiviCRM does not have permission to write temp files in {$this->compile_dir}, Exiting";
-      exit();
+      $this->compile_dir_writable = FALSE;
     }
 
     //Check for safe mode CRM-2207
@@ -196,6 +198,14 @@ class CRM_Core_Smarty extends Smarty {
    * @return bool|mixed|string
    */
   public function fetch($resource_name, $cache_id = NULL, $compile_id = NULL, $display = FALSE) {
+    // Check is in initialize() method so it only happens once, exit()
+    // is in fetch() so that we don't bomb out unless we actually try
+    // to write to the compile dir.
+    if (!$this->compile_dir_writable) {
+      echo "CiviCRM does not have permission to write temp files in {$this->compile_dir}, Exiting";
+      exit();
+    }
+
     if (preg_match('/^(\s+)?string:/', $resource_name)) {
       $old_security = $this->security;
       $this->security = TRUE;
