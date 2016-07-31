@@ -966,6 +966,8 @@ WHERE  id = %1";
   /**
    * Check price set permission.
    *
+   * @FIXME Is this checkPermission() ever called on an Upgrade class?
+   *
    * @param int $sid
    *   The price set id.
    *
