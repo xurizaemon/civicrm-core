@@ -74,7 +74,7 @@ class CRM_Contact_Form_Task_Map extends CRM_Contact_Form_Task {
         // CRM-11766
         $profileIDs = CRM_Profile_Page_Listings::getProfileContact($profileGID);
         if (!in_array($cid, $profileIDs)) {
-          CRM_Core_Error::fatal();
+          CRM_Utils_System::permissionDenied();
         }
       }
       elseif ($context) {

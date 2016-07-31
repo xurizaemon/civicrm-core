@@ -342,13 +342,13 @@ class CRM_Event_Form_Participant extends CRM_Contribute_Form_AbstractEditPayment
 
     // check for edit permission
     if (!CRM_Core_Permission::checkActionPermission('CiviEvent', $this->_action)) {
-      CRM_Core_Error::fatal(ts('You do not have permission to access this page.'));
+      CRM_Utils_System::permissionDenied(ts('You do not have permission to access this page.'));
     }
 
     if ($this->_action & CRM_Core_Action::DELETE) {
       // check delete permission for contribution
       if ($this->_id && $this->_paymentId && !CRM_Core_Permission::checkActionPermission('CiviContribute', $this->_action)) {
-        CRM_Core_Error::fatal(ts("This Participant is linked to a contribution. You must have 'delete in CiviContribute' permission in order to delete this record."));
+        CRM_Utils_System::permissionDenied(ts("This Participant is linked to a contribution. You must have 'delete in CiviContribute' permission in order to delete this record."));
       }
       return;
     }

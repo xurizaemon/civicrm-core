@@ -211,7 +211,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
   public function preProcess() {
     // Check permission for action.
     if (!CRM_Core_Permission::checkActionPermission('CiviContribute', $this->_action)) {
-      CRM_Core_Error::fatal(ts('You do not have permission to access this page.'));
+      CRM_Utils_System::permissionDenied(ts('You do not have permission to access this page.'));
     }
 
     parent::preProcess();
@@ -476,7 +476,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Contribute_Form_AbstractEditP
       $financialTypeID = CRM_Contribute_PseudoConstant::financialType($this->_values['financial_type_id']);
       CRM_Financial_BAO_FinancialType::checkPermissionedLineItems($this->_id, 'edit');
       if (!CRM_Core_Permission::check('edit contributions of type ' . $financialTypeID)) {
-        CRM_Core_Error::fatal(ts('You do not have permission to access this page.'));
+        CRM_Utils_System::permissionDenied(ts('You do not have permission to access this page.'));
       }
     }
     $allPanes = array();

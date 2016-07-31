@@ -130,7 +130,7 @@ class CRM_Member_Form_MembershipView extends CRM_Core_Form {
         break;
 
       default:
-        CRM_Core_Error::fatal(ts("Invalid action specified in URL"));
+        CRM_Utils_System::permissionDenied(ts("Invalid action specified in URL"));
     }
 
     // Redirect back to membership view page for the owner, without the relAction parameters
@@ -163,7 +163,7 @@ class CRM_Member_Form_MembershipView extends CRM_Core_Form {
         $finTypeId = CRM_Core_DAO::getFieldValue('CRM_Member_DAO_MembershipType', $values['membership_type_id'], 'financial_type_id');
         $finType = CRM_Contribute_PseudoConstant::financialType($finTypeId);
         if (!CRM_Core_Permission::check('view contributions of type ' . $finType)) {
-          CRM_Core_Error::fatal(ts('You do not have permission to access this page.'));
+          CRM_Utils_System::permissionDenied(ts('You do not have permission to access this page.'));
         }
       }
       else {

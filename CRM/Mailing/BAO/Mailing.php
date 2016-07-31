@@ -2391,7 +2391,7 @@ ORDER BY   civicrm_email.is_bulkmail DESC
     }
 
     if (!in_array($id, $mailingIDs)) {
-      CRM_Core_Error::fatal(ts('You do not have permission to access this mailing report'));
+      CRM_Utils_System::permissionDenied(ts('You do not have permission to access this mailing report'));
     }
   }
 

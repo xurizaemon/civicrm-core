@@ -44,7 +44,7 @@ class CRM_Financial_Form_FinancialType extends CRM_Contribute_Form {
     if (CRM_Financial_BAO_FinancialType::isACLFinancialTypeStatus()
       && !CRM_Core_Permission::check('administer CiviCRM Financial Types')
     ) {
-      CRM_Core_Error::fatal(ts('You do not have permission to access this page.'));
+      CRM_Utils_System::permissionDenied(ts('You do not have permission to access this page.'));
     }
     parent::preProcess();
   }

@@ -237,7 +237,8 @@ abstract class CRM_Utils_System_DrupalBase extends CRM_Utils_System_Base {
   /**
    * @inheritDoc
    */
-  public function permissionDenied() {
+  public function permissionDenied($message = '') {
+    drupal_set_message($message, 'error');
     drupal_access_denied();
   }
 

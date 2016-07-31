@@ -58,7 +58,7 @@ class CRM_Contribute_Form_ContributionPage_Delete extends CRM_Contribute_Form_Co
 
     //check for delete
     if (!CRM_Core_Permission::checkActionPermission('CiviContribute', $this->_action)) {
-      CRM_Core_Error::fatal(ts('You do not have permission to access this page.'));
+      CRM_Utils_System::permissionDenied(ts('You do not have permission to access this page.'));
     }
 
     $dao = new CRM_Contribute_DAO_Contribution();

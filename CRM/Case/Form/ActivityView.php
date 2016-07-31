@@ -53,7 +53,7 @@ class CRM_Case_Form_ActivityView extends CRM_Core_Form {
     if ($activityID &&
       !CRM_Activity_BAO_Activity::checkPermission($activityID, CRM_Core_Action::VIEW)
     ) {
-      CRM_Core_Error::fatal(ts('You do not have permission to access this page.'));
+      CRM_Utils_System::permissionDenied(ts('You do not have permission to access this page.'));
     }
 
     $this->assign('contactID', $contactID);

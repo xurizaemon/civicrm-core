@@ -280,7 +280,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
       if (CRM_Financial_BAO_FinancialType::isACLFinancialTypeStatus()
         && !CRM_Core_Permission::check('add contributions of type ' . CRM_Contribute_PseudoConstant::financialType($this->_values['financial_type_id']))
       ) {
-        CRM_Core_Error::fatal(ts('You do not have permission to access this page.'));
+        CRM_Utils_System::permissionDenied(ts('You do not have permission to access this page.'));
       }
       if (empty($this->_values['is_active'])) {
         throw new CRM_Contribute_Exception_InactiveContributionPageException(ts('The page you requested is currently unavailable.'), $this->_id);
@@ -337,7 +337,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form {
         ) &&
         !$this->_membershipBlock['is_active']
       ) {
-        CRM_Core_Error::fatal(ts('This page includes a Profile with Membership fields - but the Membership Block is NOT enabled. Please notify the site administrator.'));
+        CRM_Utils_System::permissionDenied(ts('This page includes a Profile with Membership fields - but the Membership Block is NOT enabled. Please notify the site administrator.'));
       }
 
       $pledgeBlock = CRM_Pledge_BAO_PledgeBlock::getPledgeBlock($this->_id);

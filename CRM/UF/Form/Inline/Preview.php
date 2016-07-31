@@ -56,7 +56,7 @@ class CRM_UF_Form_Inline_Preview extends CRM_UF_Form_AbstractPreview {
       ),
     );
     if (!CRM_Core_Permission::check($checkPermission)) {
-      CRM_Core_Error::fatal(ts('Permission Denied'));
+      CRM_Utils_System::permissionDenied(ts('Permission Denied'));
     }
     $content = json_decode($_REQUEST['ufData'], TRUE);
     foreach (array('ufGroup', 'ufFieldCollection') as $key) {

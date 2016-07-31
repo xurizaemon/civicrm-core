@@ -94,7 +94,7 @@ class CRM_Contribute_Form_UpdateBilling extends CRM_Core_Form {
     if (!CRM_Core_Permission::check('edit contributions')) {
       $userChecksum = CRM_Utils_Request::retrieve('cs', 'String', $this, FALSE);
       if (!CRM_Contact_BAO_Contact_Utils::validChecksum($this->_subscriptionDetails->contact_id, $userChecksum)) {
-        CRM_Core_Error::fatal(ts('You do not have permission to cancel subscription.'));
+        CRM_Utils_System::permissionDenied(ts('You do not have permission to cancel subscription.'));
       }
       $this->_selfService = TRUE;
     }
