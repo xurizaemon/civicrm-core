@@ -251,6 +251,8 @@ class CiviMailUtils extends PHPUnit_Framework_TestCase {
    */
   public function checkMailLog($strings, $absentStrings = array(), $prefix = '') {
     $mail = $this->getMostRecentEmail('raw');
+    // Theory: we are seeing matches from previous mails?
+    $this->_ut->assertEquals(1, preg_match_all('/^From: /m', $mail));
     return $this->checkMailForStrings($strings, $absentStrings, $prefix, $mail);
   }
 
@@ -328,7 +330,12 @@ class CiviMailUtils extends PHPUnit_Framework_TestCase {
   }
 
   /**
-   * Remove any sent messages from the log.
+   * Remove a number of sent messages from the log.
+   *
+   * Note that per default it clears a single message, leading to a pattern of
+   * calling it with 999 in some places. Suggest this be clarified by making the
+   * default behaviour clear ALL messages, which is what the function name
+   * suggests.
    *
    * @param int $limit
    *
@@ -336,7 +343,7 @@ class CiviMailUtils extends PHPUnit_Framework_TestCase {
    */
   public function clearMessages($limit = 1) {
     if ($this->_webtest) {
-      throw new Exception("Not implementated: clearMessages for WebTest");
+      throw new Exception("Not implemented: clearMessages for WebTest");
     }
     else {
       CRM_Core_DAO::executeQuery('DELETE FROM civicrm_mailing_spool ORDER BY id DESC LIMIT ' . $limit);

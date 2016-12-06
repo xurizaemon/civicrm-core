@@ -340,6 +340,7 @@ class api_v3_ContributionPageTest extends CiviUnitTestCase {
     $this->callAPIAndDocument('contribution_page', 'submit', $submitParams, __FUNCTION__, __FILE__, 'submit contribution page', NULL);
     $contribution = $this->callAPISuccess('contribution', 'getsingle', array('contribution_page_id' => $this->_ids['contribution_page']));
     $this->callAPISuccess('membership_payment', 'getsingle', array('contribution_id' => $contribution['id']));
+
     $mut->checkMailLog(array(
       'Membership Type: General',
     ));
@@ -378,6 +379,7 @@ class api_v3_ContributionPageTest extends CiviUnitTestCase {
         'Amount',
       )
     );
+
     $mut->stop();
     $mut->clearMessages(999);
   }
@@ -444,6 +446,19 @@ class api_v3_ContributionPageTest extends CiviUnitTestCase {
       '$ 2.00',
       'Membership Fee',
     ));
+    // We should have two separate email messages, each with their own amount
+    // line and no total line.
+    $mut->checkAllMailLog(
+      array(
+        'Amount: $ 2.00',
+        'Amount: $ 10.00',
+        'Membership Fee',
+      ),
+      array(
+        'Total: $',
+      )
+    );
+
     $mut->stop();
     $mut->clearMessages(999);
   }
@@ -481,6 +496,7 @@ class api_v3_ContributionPageTest extends CiviUnitTestCase {
       'General Membership: $ 0.00',
       'Membership Fee',
     ));
+
     $mut->stop();
     $mut->clearMessages();
   }
@@ -560,6 +576,7 @@ class api_v3_ContributionPageTest extends CiviUnitTestCase {
       $this->assertEquals(.72, $contribution['fee_amount']);
       $this->assertEquals($contribution['total_amount'] - .72, $contribution['net_amount']);
     }
+
     // The total string is currently absent & it seems worse with - although at some point
     // it may have been intended
     $mut->checkAllMailLog(array('$ 2.00', 'Contribution Amount', '$ 10.00'), array('Total:'));
@@ -1142,8 +1159,13 @@ class api_v3_ContributionPageTest extends CiviUnitTestCase {
 
   /**
    * Add text field other amount to the price set.
+   *
+   * @TODO I don't think this gets called at all. Let's remove it.
    */
   public function addOtherAmountFieldToMembershipPriceSet() {
+    $this->assertEquals('Method is being used', FALSE);
+    $this->assertEquals('Method should be removed', TRUE);
+
     $this->_ids['price_field']['other_amount'] = $this->callAPISuccess('price_field', 'create', array(
       'price_set_id' => reset($this->_ids['price_set']),
       'name' => 'other_amount',
