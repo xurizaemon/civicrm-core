@@ -634,9 +634,6 @@ class api_v3_ContributionPageTest extends CiviUnitTestCase {
       $this->assertEquals($contribution['total_amount'] - .72, $contribution['net_amount']);
     }
 
-    $messages = $mut->getAllMessages();
-    print_r($messages);
-
     // The total string is currently absent & it seems worse with - although at some point
     // it may have been intended
     $mut->checkAllMailLog(array('$ 2.00', 'Contribution Amount', '$ 10.00'), array('Total:'));
