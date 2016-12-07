@@ -585,6 +585,66 @@ class api_v3_ContributionPageTest extends CiviUnitTestCase {
   }
 
   /**
+   * Test submit with a membership block in place, and an "Other" amount.
+   *
+   * - Expect separate payments for membership and contribution.
+   * - Expect separate receipts to be generated.
+   */
+  public function testSubmitMembershipBlockIsSeparatePaymentWithOtherRecurringDonationNow() {
+    $mut = new CiviMailUtils($this, TRUE);
+    $this->setUpMembershipContributionPage(TRUE);
+    $this->addOtherAmountFieldToMembershipPriceSet();
+
+    $processor = Civi\Payment\System::singleton()->getById($this->_paymentProcessor['id']);
+    $processor->setDoDirectPaymentResult(array('fee_amount' => .72));
+    $submitParams = array(
+      'price_' . $this->_ids['price_field'][0] => reset($this->_ids['price_field_value']),
+      'id' => (int) $this->_ids['contribution_page'],
+      'amount' => 10,
+      'billing_first_name' => 'Billy',
+      'billing_middle_name' => 'Goat',
+      'billing_last_name' => 'Gruff',
+      'email-Primary' => __FUNCTION__ . '@example.org',
+      'selectMembership' => $this->_ids['membership_type'],
+      'payment_processor_id' => $this->_paymentProcessor['id'],
+      'credit_card_number' => '4111111111111111',
+      'credit_card_type' => 'Visa',
+      'credit_card_exp_date' => array('M' => 9, 'Y' => 2040),
+      'cvv2' => 123,
+    );
+
+    $this->callAPIAndDocument('contribution_page', 'submit', $submitParams, __FUNCTION__, __FILE__, 'submit contribution page', NULL);
+    $contributions = $this->callAPISuccess('contribution', 'get', array(
+      'contribution_page_id' => $this->_ids['contribution_page'],
+      'contribution_status_id' => 1,
+    ));
+    $this->assertCount(2, $contributions['values']);
+    $membershipPayment = $this->callAPISuccess('membership_payment', 'getsingle', array());
+    $this->assertTrue(in_array($membershipPayment['contribution_id'], array_keys($contributions['values'])));
+    $membership = $this->callAPISuccessGetSingle('membership', array('id' => $membershipPayment['membership_id']));
+    $this->assertEquals($membership['contact_id'], $contributions['values'][$membershipPayment['contribution_id']]['contact_id']);
+    $lineItem = $this->callAPISuccessGetSingle('LineItem', array('entity_table' => 'civicrm_membership'));
+    $this->assertEquals($lineItem['entity_id'], $membership['id']);
+    $this->assertEquals($lineItem['contribution_id'], $membershipPayment['contribution_id']);
+    $this->assertEquals($lineItem['qty'], 1);
+    $this->assertEquals($lineItem['unit_price'], 2);
+    $this->assertEquals($lineItem['line_total'], 2);
+    foreach ($contributions['values'] as $contribution) {
+      $this->assertEquals(.72, $contribution['fee_amount']);
+      $this->assertEquals($contribution['total_amount'] - .72, $contribution['net_amount']);
+    }
+
+    $messages = $mut->getAllMessages();
+    print_r($messages);
+
+    // The total string is currently absent & it seems worse with - although at some point
+    // it may have been intended
+    $mut->checkAllMailLog(array('$ 2.00', 'Contribution Amount', '$ 10.00'), array('Total:'));
+    $mut->stop();
+    $mut->clearMessages();
+  }
+
+  /**
    * Test that when a transaction fails the pending contribution remains.
    *
    * An activity should also be created. CRM-16417.
@@ -1159,13 +1219,8 @@ class api_v3_ContributionPageTest extends CiviUnitTestCase {
 
   /**
    * Add text field other amount to the price set.
-   *
-   * @TODO I don't think this gets called at all. Let's remove it.
    */
   public function addOtherAmountFieldToMembershipPriceSet() {
-    $this->assertEquals('Method is being used', FALSE);
-    $this->assertEquals('Method should be removed', TRUE);
-
     $this->_ids['price_field']['other_amount'] = $this->callAPISuccess('price_field', 'create', array(
       'price_set_id' => reset($this->_ids['price_set']),
       'name' => 'other_amount',
