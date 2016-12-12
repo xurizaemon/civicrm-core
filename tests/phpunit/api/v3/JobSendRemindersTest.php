@@ -48,9 +48,8 @@ class api_v3_JobSendRemindersTest extends CiviUnitTestCase {
   public $_params = array();
   private $_email;
   private $_organization_cid;
-  private $_membership_type;
-  private $_contact;
-  private $_action_schedule_params;
+  private $_membership_type, $_contact, $_action_schedule;
+  private $_unique_string;
 
   /**
    * @var CiviMailUtils
@@ -74,15 +73,18 @@ class api_v3_JobSendRemindersTest extends CiviUnitTestCase {
     ]);
 
     // Test subject.
-    $this->_contact_params = [
+    $contact_params = [
       'contact_type' => 'Individual',
-      'first_name' => 'Casey',
-      'last_name' => 'McTavish',
-      'email' => 'casey.mctavish@example.org',
+      'first_name' => 'Madge',
+      'last_name' => 'Allsop',
+      'email' => 'madge.allsop@example.org',
     ];
+    // Set up a contact.
+    $contact = $this->callAPISuccess('Contact', 'create', $contact_params);
+    $this->_contact = $contact['values'][$contact['id']];
 
     // Membership type.
-    $this->_membership_type_params = array(
+    $membership_type_params = array(
       'name' => 'Tomato Fancier',
       'description' => 'Elite Lycopersicum Appreciators',
       'financial_type_id' => 1,
@@ -94,11 +96,21 @@ class api_v3_JobSendRemindersTest extends CiviUnitTestCase {
       'visibility' => 'public',
       'member_of_contact_id' => $this->_organization_cid,
     );
+    $membership_type = $this->callApiSuccess('MembershipType', 'create', $membership_type_params);
+    $this->_membership_type = $membership_type['values'][$membership_type['id']];
 
-    // Scheduled reminder,
+    // Set up a scheduled reminder,
+    // @TODO There's probably a better way to identify the appropriate mapping?
+    // We want the "membership" action to associate it with the action schedule.
+    $mapping = CRM_Core_BAO_ActionSchedule::getMappings();
+    foreach ($mapping as $entry) {
+      if (get_class($entry) === 'CRM_Member_ActionMapping') {
+        $mapping_id = $entry->getId();
+      }
+    }
     // aka action schedule in DB,
     // aka schedule reminder in UI.
-    $this->_action_schedule_params = [
+    $action_schedule_params = [
       'name' => 'Expiry notice',
       'title' => 'Expiry notice',
       'start_action_offset' => 1,
@@ -106,27 +118,11 @@ class api_v3_JobSendRemindersTest extends CiviUnitTestCase {
       'start_action_condition' => 'after',
       'start_action_date' => 'membership_end_date',
       'body_text' => $this->_string_with_tokens,
-      // ''
+      'entity_value' => $this->_membership_type['id'],
+      'mapping_id' => $mapping_id,
     ];
-
-    // Scheduled reminder mappings.
-    // @TODO There's probably a better way to identify the appropriate mapping?
-    $this->_action_schedule_params['']
-  /*
-    $mapping = CRM_Core_BAO_ActionSchedule::getMappings();
-    foreach ($mapping as $entry) {
-      print_r($entry);
-      if (gettype($entry) === 'CRM_Member_ActionMapping') {
-
-        // $this->_action_schedule_params['mapping_id'] = $entry->getId();
-      }
-      else {
-        print gettype($entry);
-      }
-    }
-  */
-
-
+    $action_schedule = $this->callApiSuccess('ActionSchedule', 'create', $action_schedule_params);
+    $this->_action_schedule = $action_schedule['values'][$action_schedule['id']];
   }
 
   public function tearDown() {
@@ -136,27 +132,10 @@ class api_v3_JobSendRemindersTest extends CiviUnitTestCase {
     parent::tearDown();
   }
 
-  public function testBasic() {
-    // Set up a contact.
-    $this->_contact = $this->callAPISuccess('contact', 'create', $this->_contact_params);
-
-    // Set up a membership type.
-    $this->_membership_type = $this->callApiSuccess('MembershipType', 'create', $this->_membership_type_params);
-
-
-
-    return;
-
-    // Set up a scheduled reminder.
+  public function testReminderTokens() {
     // Create a membership of type X.
     // Call scheduled reminders API.
     // Check the resulting emails.
-    
-    $this->createContactsInGroup(10, $this->_groupID);
-    $this->callAPISuccess('mailing', 'create', $this->_params);
-    $this->_mut->assertRecipients(array());
-    $this->callAPISuccess('job', 'process_mailing', array());
-    $this->_mut->assertRecipients($this->getRecipients(1, 2));
   }
 
   /**

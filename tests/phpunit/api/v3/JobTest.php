@@ -237,6 +237,35 @@ class api_v3_JobTest extends CiviUnitTestCase {
   }
 
   /**
+   * Test scheduled reminders replace tokens as expected.
+   *
+   * We create 3 contacts - 1 is in our group, 1 has our membership & the chosen one has both
+   * & check that only the chosen one got the reminder
+   */
+  public function testScheduledReminderTokens() {
+    $membershipTypeID = $this->membershipTypeCreate();
+    $this->membershipStatusCreate();
+    $contactID = $this->individualCreate();
+    $this->callAPISuccess('action_schedule', 'create', array(
+      'title' => " remind all Texans",
+      'subject' => "drawling renewal",
+      'entity_value' => $membershipTypeID,
+      'mapping_id' => 4,
+      'start_action_date' => 'membership_start_date',
+      'start_action_offset' => 1,
+      'start_action_condition' => 'before',
+      'start_action_unit' => 'day',
+      'limit_to' => TRUE,
+    ));
+    $this->callAPISuccess('job', 'send_reminder', array());
+    $this->assertEquals('no', 'yes');
+    $successfulCronCount = CRM_Core_DAO::singleValueQuery("SELECT count(*) FROM civicrm_action_log");
+    $this->assertEquals($successfulCronCount, 1);
+    $sentToID = CRM_Core_DAO::singleValueQuery("SELECT contact_id FROM civicrm_action_log");
+    $this->assertEquals($sentToID, $theChosenOneID);
+  }
+
+  /**
    * Test scheduled reminders respect limit to (since above identified addition_to handling issue).
    *
    * We create 3 contacts - 1 is in our group, 1 has our membership & the chosen one has both
