@@ -57,7 +57,7 @@ class api_v3_JobSendRemindersTest extends CiviUnitTestCase {
   private $_mut;
 
   public function setUp() {
-    $this->cleanupMailingTest();
+    $this->cleanup();
     parent::setUp();
     $this->_mut = new CiviMailUtils($this, TRUE);
 
@@ -139,29 +139,11 @@ class api_v3_JobSendRemindersTest extends CiviUnitTestCase {
   }
 
   /**
-   * Create contacts in group.
-   *
-   * @param int $count
-   * @param int $groupID
-   * @param string $domain
-   */
-  public function createContactsInGroup($count, $groupID, $domain = 'nul.example.com') {
-    for ($i = 1; $i <= $count; $i++) {
-      $contactID = $this->individualCreate(array('first_name' => $count, 'email' => 'mail' . $i . '@' . $domain));
-      $this->callAPISuccess('group_contact', 'create', array(
-        'contact_id' => $contactID,
-        'group_id' => $groupID,
-        'status' => 'Added',
-      ));
-    }
-  }
-
-  /**
    * Clean up our test data.
    *
    * @throws \Exception
    */
-  protected function cleanupMailingTest() {
+  protected function cleanup() {
     $this->quickCleanup(array(
       'civicrm_contact',
       'civicrm_membership',
