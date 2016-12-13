@@ -73,6 +73,9 @@ class TokenCompatSubscriber implements EventSubscriberInterface {
 
       $contactArray = !is_array($contactId) ? array($contactId => $contact) : $contact;
 
+      // Reformat $messageTokens for consistency.
+      $messageTokens = $this->formatMessageTokens($messageTokens);
+
       // Note: This is a small contract change from the past; data should be missing
       // less randomly.
       //\CRM_Utils_Hook::tokenValues($contact, $row->context['contactId']);
@@ -89,6 +92,40 @@ class TokenCompatSubscriber implements EventSubscriberInterface {
       }
       $row->context('contact', $contact);
     }
+  }
+
+  /**
+   * Reformat $messageTokens if token names are values.
+   *
+   * Some components (@TODO: name names?) pass in $messageTokens in
+   * TokenProcessor format (token name is value), while others pass in hook
+   * format (token name is key).
+   *
+   * This method reformats $messageTokens if it detects that the token names are
+   * passed as values.
+   *
+   * @param array $messageTokens Per TokenProcessor format
+   *  [ 'contact' => [ 'checksum', 'contact_id' ] ]
+   * @return array Per hook format
+   *  [ 'contact' => [ 'first_name' => 1, 'email_greeting' => 1 ] ] ]
+   */
+  public function formatMessageTokens($messageTokens) {
+    $result = [];
+    // Don't reformat if any entity.token has token names as keys.
+    foreach ($messageTokens as $entity => $names) {
+      foreach ($names as $k => $v) {
+        if (!is_integer($k)) {
+          return $messageTokens;
+        }
+      }
+    }
+    // All entity.token names are as values here, so reformat.
+    foreach ($messageTokens as $entity => $names) {
+      foreach ($names as $name) {
+        $result[$entity][$name] = 1;
+      }
+    }
+    return $result;
   }
 
   /**
