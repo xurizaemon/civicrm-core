@@ -95,6 +95,8 @@ class CRM_Core_BAO_ActionScheduleTest extends CiviUnitTestCase {
       'contact_type' => 'Individual',
       'email' => 'test-member@example.com',
       'gender_id' => 'Female',
+      'first_name' => 'Churmondleia',
+      'last_name' => 'Ōtākou',
     );
     $this->fixtures['contact_birthdate'] = array(
       'is_deceased' => 0,
@@ -621,22 +623,29 @@ class CRM_Core_BAO_ActionScheduleTest extends CiviUnitTestCase {
   public function mailerExamples() {
     $cases = array();
 
-    $manyTokensTmpl = implode(';;', array(
+    // Some tokens - short as subject has 128char limit.
+    $someTokensTmpl = implode(';;', array(
       '{contact.display_name}', // basic contact token
       '{contact.gender}', // funny legacy contact token
       '{contact.gender_id}', // funny legacy contact token
       '{domain.name}', // domain token
       '{activity.activity_type}', // action-scheduler token
     ));
+    // More tokens.
+    $manyTokensTmpl = implode(';;', array(
+      $someTokensTmpl,
+      '{contact.email_greeting}',
+    ));
     // Note: The behavior of domain-tokens on a scheduled reminder is undefined. All we
     // can really do is check that it has something.
-    $manyTokensExpected = 'test-member@example.com;;Female;;Female;;[a-zA-Z0-9 ]+;;Phone Call';
+    $someTokensExpected = 'Churmondleia Ōtākou;;Female;;Female;;[a-zA-Z0-9 ]+;;Phone Call';
+    $manyTokensExpected = "$someTokensExpected;;Dear Churmondleia";
 
     // In this example, we use a lot of tokens cutting across multiple components..
     $cases[0] = array(
       // Schedule definition.
       array(
-        'subject' => "subj $manyTokensTmpl",
+        'subject' => "subj $someTokensTmpl",
         'body_html' => "html $manyTokensTmpl",
         'body_text' => "text $manyTokensTmpl",
       ),
@@ -644,7 +653,7 @@ class CRM_Core_BAO_ActionScheduleTest extends CiviUnitTestCase {
       array(
         'from_name' => "/^FIXME\$/",
         'from_email' => "/^info@EXAMPLE.ORG\$/",
-        'subject' => "/^subj $manyTokensExpected\$/",
+        'subject' => "/^subj $someTokensExpected\$/",
         'body_html' => "/^html $manyTokensExpected\$/",
         'body_text' => "/^text $manyTokensExpected\$/",
       ),
