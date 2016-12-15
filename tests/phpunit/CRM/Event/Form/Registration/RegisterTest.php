@@ -26,45 +26,52 @@
  */
 
 /**
- *
- * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2016
- * $Id$
- *
+ * Class CRM_Event_Form_RegistrationTest
+ * @group headless
  */
+class CRM_Event_Form_RegistrationTest extends CiviUnitTestCase {
 
-/**
- * This class contains all the function that are called using AJAX
- */
-class CRM_Event_Page_AJAX {
+  public function setUp() {
+    parent::setUp();
+  }
+
 
   /**
-   * Building EventFee combo box.
-   * FIXME: This ajax callback could be eliminated in favor of an entityRef field but the priceFieldValue api doesn't currently support filtering on entity_table
+   * CRM-19626 - Test minimum value configured for priceset.
    */
-  public function eventFee() {
-    $name = trim(CRM_Utils_Type::escape($_GET['term'], 'String'));
+  public function testMinValueForPriceSet() {
+    $form = new CRM_Event_Form_Registration();
+    $form->controller = new CRM_Core_Controller();
 
-    if (!$name) {
-      $name = '%';
+    $minAmt = 100;
+    $feeAmt = 1000;
+    $event = $this->eventCreate();
+    $priceSetId = $this->eventPriceSetCreate($feeAmt, $minAmt);
+    $priceSet = current(CRM_Price_BAO_PriceSet::getSetDetail($priceSetId));
+    $form->_values['fee'] = $form->_feeBlock = $priceSet['fields'];
+    $form->_values['event'] = $event['values'][$event['id']];
+    $form->_skipDupeRegistrationCheck = 1;
+
+    $priceField = $this->callAPISuccess('PriceField', 'get', array('price_set_id' => $priceSetId));
+    $params = array(
+      'email-Primary' => 'someone@example.com',
+      'priceSetId' => $priceSetId,
+    );
+    // Check empty values for price fields.
+    foreach (array_keys($priceField['values']) as $fieldId) {
+      $params['price_' . $fieldId] = 0;
     }
+    $form->set('priceSetId', $priceSetId);
+    $form->set('priceSet', $priceSet);
+    $form->set('name', 'CRM_Event_Form_Registration_Register');
+    $files = array();
+    $errors = CRM_Event_Form_Registration_Register::formRule($params, $files, $form);
 
-    $whereClause = "cv.label LIKE '$name%' ";
-
-    $query = "SELECT DISTINCT (
-cv.label
-), cv.id
-FROM civicrm_price_field_value cv
-LEFT JOIN civicrm_price_field cf ON cv.price_field_id = cf.id
-LEFT JOIN civicrm_price_set_entity ce ON ce.price_set_id = cf.price_set_id
-WHERE ce.entity_table = 'civicrm_event' AND {$whereClause}";
-
-    $dao = CRM_Core_DAO::executeQuery($query);
-    $results = array();
-    while ($dao->fetch()) {
-      $results[] = array('id' => $dao->id, 'text' => $dao->label);
-    }
-    CRM_Utils_JSON::output($results);
+    //Assert the validation Error.
+    $expectedResult = array(
+      '_qf_default' => ts('A minimum amount of %1 should be selected from Event Fee(s).', array(1 => CRM_Utils_Money::format($minAmt))),
+    );
+    $this->checkArrayEquals($expectedResult, $errors);
   }
 
 }
