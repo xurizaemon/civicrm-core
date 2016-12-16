@@ -433,10 +433,9 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact {
     );
 
     if (!$config->doNotResetCache) {
-      // Note: doNotResetCache flag is currently set by import contact process and merging,
-      // since resetting and
-      // rebuilding cache could be expensive (for many contacts). We might come out with better
-      // approach in future.
+      // Note: doNotResetCache flag is currently set by import contact process
+      // and merging, since resetting and rebuilding cache could be expensive
+      // (for many contacts). We might come out with better approach in future.
       CRM_Contact_BAO_Contact_Utils::clearContactCaches($contact->id);
     }
 

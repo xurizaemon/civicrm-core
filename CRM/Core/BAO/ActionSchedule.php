@@ -611,7 +611,7 @@ FROM civicrm_action_schedule cas
       $body_text = CRM_Utils_String::htmlToText($body_html);
     }
 
-    // set up the parameters for CRM_Utils_Mail::send
+    // Set up the parameters for CRM_Utils_Mail::send
     $mailParams = array(
       'groupName' => 'Scheduled Reminder Sender',
       'from' => self::pickFromEmail($schedule),

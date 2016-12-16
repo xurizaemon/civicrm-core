@@ -1434,7 +1434,6 @@ class CRM_Utils_Token {
    * @param bool $escapeSmarty
    */
   public static function replaceGreetingTokens(&$tokenString, $contactDetails = NULL, $contactId = NULL, $className = NULL, $escapeSmarty = FALSE) {
-
     if (!$contactDetails && !$contactId) {
       return;
     }
@@ -1619,6 +1618,7 @@ class CRM_Utils_Token {
 
   /**
    * Replace tokens for an entity.
+   *
    * @param string $entity
    * @param array $entityArray
    *   (e.g. in format from api).
