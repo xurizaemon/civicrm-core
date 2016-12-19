@@ -615,6 +615,7 @@ FROM civicrm_action_schedule cas
     $mailParams = array(
       'groupName' => 'Scheduled Reminder Sender',
       'from' => self::pickFromEmail($schedule),
+      // CRM-19786
       'toName' => $tokenRow->context['contact']['display_name'],
       'toEmail' => $toEmail,
       'subject' => $tokenRow->render('subject'),
@@ -658,6 +659,8 @@ FROM civicrm_action_schedule cas
     $tp->addMessage('body_html', $schedule->body_html, 'text/html');
     $tp->addMessage('sms_body_text', $schedule->sms_body_text, 'text/plain');
     $tp->addMessage('subject', $schedule->subject, 'text/plain');
+    // CRM-19786
+    $tp->addMessage('recipient', '{contact.display_name}', 'text/plain');
     return $tp;
   }
 
